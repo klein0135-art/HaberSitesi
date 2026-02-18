@@ -1,0 +1,25 @@
+﻿@model List<HaberSitesi.Models.Haber>
+
+<div class="container-fluid mt-5">
+    <div class="container">
+        <div class="section-title">
+            <h4 class="m-0 text-uppercase font-weight-bold">@ViewBag.KategoriAdi Haberleri</h4>
+        </div>
+        <div class="row">
+            @foreach (var haber in Model)
+            {
+                <div class="col-lg-4 mb-3">
+                    <div class="position-relative mb-3">
+                        <img class="img-fluid w-100" src="~/img/@haber.ResimYolu" style="height: 200px; object-fit: cover;">
+                        <div class="bg-white border border-top-0 p-4">
+                            <div class="mb-2">
+                                <a class="text-body" href="#">@haber.Tarih.ToString("dd MMM")</a>
+                            </div>
+                            <a class="h4 d-block mb-3 text-secondary text-uppercase font-weight-bold" href="/Home/Detay/@haber.Id">@haber.Baslik</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

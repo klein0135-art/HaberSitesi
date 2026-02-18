@@ -1,0 +1,57 @@
+﻿@model HaberSitesi.Models.Uye
+
+@{
+    Layout = null; 
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Kayıt Ol - BizNews</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <div class="card shadow p-4" style="width: 400px;">
+            <div class="text-center mb-4">
+                <h2 class="font-weight-bold text-dark">BAHONEWS</h2>
+                <h5 class="text-muted">Aramıza Katıl</h5>
+            </div>
+
+            @if (ViewBag.Hata != null)
+            {
+                <div class="alert alert-danger">
+                    @ViewBag.Hata
+                </div>
+            }
+
+            <form asp-action="Register" method="post">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label>Adınız Soyadınız</label>
+                    <input type="text" name="AdSoyad" class="form-control" required placeholder="Ad Soyad">
+                </div>
+                <div class="form-group">
+                    <label>E-Posta Adresi</label>
+                    <input type="email" name="Eposta" class="form-control" required placeholder="ornek@mail.com">
+                </div>
+                <div class="form-group">
+                    <label>Şifre</label>
+                    <input type="password" name="Sifre" class="form-control" required placeholder="****">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block font-weight-bold py-2">KAYIT OL</button>
+            </form>
+
+            <div class="text-center mt-3">
+                <span class="text-muted">Zaten hesabın var mı?</span>
+                <a href="/Guvenlik/Login" class="font-weight-bold">Giriş Yap</a>
+            </div>
+
+            <div class="text-center mt-2">
+                <a href="/" class="text-muted small">← Ana Sayfaya Dön</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,153 @@
+﻿@model IEnumerable<HaberSitesi.Models.Haber>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1>Haberler</h1>
+                <a asp-action="Create" class="btn btn-primary">Yeni Haber Ekle</a>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Baslik)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Icerik)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ResimYolu)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Tarih)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Kategori)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Baslik)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Icerik)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ResimYolu)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tarih)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Kategori.Id)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-4">
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Kategori Yönetimi</h5>
+                        <p class="card-text small text-muted">Yeni kategori ekle veya kategori yönetim sayfasına git.</p>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#kategoriEkleModal">
+                                Yeni Kategori Ekle
+                            </button>
+                            <a href="/Kategori" class="btn btn-secondary">Kategori Yönetimi (Tam Sayfa)</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+
+
+                        @{
+                            var kategoriler = ViewBag.Kategoriler as List<HaberSitesi.Models.Kategori>;
+                        }
+
+                        @if (kategoriler != null && kategoriler.Count > 0)
+                        {
+                            <ul class="list-group">
+                                @foreach (var kat in kategoriler)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>@kat.Ad</span>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a class="btn btn-outline-secondary btn-sm" href="/Kategori/Edit/@kat.Id">Düzenle</a>
+                                            <form method="post" action="/Kategori/Delete/@kat.Id" onsubmit="return confirm('Bu kategoriyi silmek istediğinizden emin misiniz?');" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@kat.Id" />
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">Sil</button>
+                                            </form>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            
+                        }
+
+                    </div>
+                </div>
+
+                
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+@if (User.IsInRole("Admin"))
+{
+    <div class="modal fade" id="kategoriEkleModal" tabindex="-1" aria-labelledby="kategoriEkleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="kategoriEkleModalLabel">Yeni Kategori Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="/Kategori/Create">
+                    <div class="modal-body">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label for="Ad" class="form-label">Kategori Adı</label>
+                            <input type="text" name="Ad" id="Ad" class="form-control" required maxlength="50" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                        <button type="submit" class="btn btn-primary">Ekle</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+}

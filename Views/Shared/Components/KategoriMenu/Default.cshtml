@@ -1,0 +1,13 @@
+@model IEnumerable<HaberSitesi.Models.Kategori>
+
+<div class="dropdown">
+    <button class="btn btn-link text-dark text-decoration-none dropdown-toggle fw-bold" data-bs-toggle="dropdown">
+        Kategoriler
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+        @foreach (var kat in Model)
+        {
+            <li><a class="dropdown-item" href="/Home/KategoriDetay/@kat.Id">@kat.Ad</a></li>
+        }
+    </ul>
+</div>

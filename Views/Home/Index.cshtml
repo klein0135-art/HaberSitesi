@@ -1,0 +1,321 @@
+﻿@model List<HaberSitesi.Models.Haber>
+
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<style>
+  
+    .news-card-modern {
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        height: 100%;
+        border: 1px solid rgba(0,0,0,0.03);
+    }
+
+        .news-card-modern:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+    .img-wrapper {
+        overflow: hidden;
+        position: relative;
+        padding-top: 60%; 
+    }
+
+        .img-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+    .news-card-modern:hover .img-wrapper img {
+        transform: scale(1.08);
+    }
+
+    .cat-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: rgba(255, 255, 255, 0.95);
+        color: #000;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        z-index: 2;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+   
+    .hero-slider-item {
+        height: 550px;
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .overlay-hero {
+        background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%);
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: flex-end;
+        padding: 40px;
+    }
+
+    
+    .side-news-card {
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+        height: 265px;
+    }
+
+        .side-news-card img {
+            transition: transform 0.5s ease;
+        }
+
+        .side-news-card:hover img {
+            transform: scale(1.1);
+        }
+
+   
+    .section-title {
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        position: relative;
+        display: inline-block;
+        margin-bottom: 30px;
+    }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 4px;
+            background: #ff3e3e;
+            margin-top: 8px;
+            border-radius: 2px;
+        }
+
+    .btn-load-more {
+        background-color: #f3f4f6;
+        color: #333;
+        font-weight: 600;
+        transition: all 0.3s;
+        border: none;
+    }
+
+        .btn-load-more:hover {
+            background-color: #e5e7eb;
+            color: #000;
+        }
+</style>
+
+<div class="container py-3">
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8">
+            <div class="owl-carousel main-carousel h-100">
+                @if (ViewBag.SonHaberler != null)
+                {
+                    foreach (var haber in ((List<HaberSitesi.Models.Haber>)ViewBag.SonHaberler).Take(3))
+                    {
+                        <div class="hero-slider-item shadow-lg">
+                            <img src="~/img/@haber.ResimYolu" class="w-100 h-100 object-fit-cover" alt="@haber.Baslik">
+                            <div class="overlay-hero">
+                                <div class="text-white w-100">
+                                    <span class="badge bg-danger mb-3 px-3 py-2 rounded-pill">@haber.Kategori?.Ad</span>
+                                    <h2 class="fw-bold mb-2 display-6 lh-sm">
+                                        <a href="/Home/Detay/@haber.Id" class="text-white text-decoration-none stretched-link">@haber.Baslik</a>
+                                    </h2>
+                                    <small class="opacity-75"><i class="bi bi-clock me-2"></i>@haber.Tarih.ToString("dd MMMM, HH:mm")</small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="d-flex flex-column gap-4 h-100">
+                @if (ViewBag.SonHaberler != null)
+                {
+                    foreach (var haber in ((List<HaberSitesi.Models.Haber>)ViewBag.SonHaberler).Skip(3).Take(2))
+                    {
+                        <div class="side-news-card shadow-sm flex-fill">
+                            <img src="~/img/@haber.ResimYolu" class="w-100 h-100 object-fit-cover" alt="@haber.Baslik">
+                            <div class="overlay-hero p-4">
+                                <div>
+                                    <span class="badge bg-warning text-dark mb-2">@haber.Kategori?.Ad</span>
+                                    <h5 class="text-white fw-bold m-0 lh-base">
+                                        <a href="/Home/Detay/@haber.Id" class="text-white text-decoration-none stretched-link">@haber.Baslik</a>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-5">
+        <div class="col-lg-8">
+            <h3 class="section-title">Son Dakika</h3>
+
+            <div class="row g-4" id="haberListesi">
+                @if (Model != null && Model.Count > 0)
+                {
+                    @foreach (var haber in Model)
+                    {
+                        <div class="col-md-6">
+                            <div class="news-card-modern d-flex flex-column">
+                                <div class="img-wrapper">
+                                    <span class="cat-badge">@haber.Kategori?.Ad</span>
+                                    <a href="/Home/Detay/@haber.Id">
+                                        <img src="~/img/@haber.ResimYolu" alt="@haber.Baslik">
+                                    </a>
+                                </div>
+                                <div class="p-4 d-flex flex-column flex-grow-1">
+                                    <div class="text-muted small mb-2 fw-medium">
+                                        <i class="bi bi-calendar3 me-2 text-danger"></i>@haber.Tarih.ToString("dd MMMM yyyy")
+                                    </div>
+                                    <h5 class="fw-bold mb-3 flex-grow-1 lh-base">
+                                        <a href="/Home/Detay/@haber.Id" class="text-dark text-decoration-none">@haber.Baslik</a>
+                                    </h5>
+                                    <a href="/Home/Detay/@haber.Id" class="btn btn-link text-danger p-0 fw-bold text-decoration-none align-self-start">
+                                        Devamını Oku <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12"><div class="alert alert-light border shadow-sm">Henüz haber girişi yapılmamış.</div></div>
+                }
+            </div>
+
+            @if (ViewBag.ToplamHaberSayisi > 5)
+            {
+                <div class="text-center mt-5 mb-5">
+                    <button id="btnDahaFazla" class="btn btn-load-more w-100 py-3 rounded-pill">
+                        DAHA FAZLA GÖSTER
+                    </button>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <div class="sticky-top" style="top: 110px;">
+                <h4 class="section-title">Çok Okunanlar</h4>
+
+                <div class="bg-white rounded-4 shadow-sm p-2 border">
+                    @if (ViewBag.Populer != null)
+                    {
+                        var sayac = 1;
+                        foreach (var pop in ViewBag.Populer)
+                        {
+                            <a href="/Home/Detay/@pop.Id" class="d-flex align-items-center p-3 text-decoration-none border-bottom position-relative hover-bg-light">
+                                <span class="fs-1 fw-bold text-light text-stroke me-3" style="-webkit-text-stroke: 1px #dee2e6; color: transparent;">@sayac</span>
+                                <div class="flex-grow-1">
+                                    <h6 class="text-dark fw-bold mb-1 clamp-2">@pop.Baslik</h6>
+                                    <small class="text-muted"><i class="bi bi-eye-fill me-1 text-secondary"></i>@pop.OkunmaSayisi</small>
+                                </div>
+                            </a>
+                            sayac++;
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function(){
+            // Slider Init
+            $(".main-carousel").owlCarousel({
+                items: 1,
+                loop: true,
+                autoplay: true,
+                autoplayTimeout: 6000,
+                smartSpeed: 1000,
+                dots: true,
+                nav: false,
+                animateOut: 'fadeOut'
+            });
+
+            // AJAX Load More
+            var skipSayisi = 5;
+
+            $("#btnDahaFazla").click(function () {
+                var btn = $(this);
+                var orjText = btn.text();
+                btn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Yükleniyor...');
+                btn.prop('disabled', true);
+
+                $.ajax({
+                    url: '/Home/HaberleriGetir',
+                    type: 'GET',
+                    data: { skip: skipSayisi },
+                    success: function (data) {
+                        if (data.length > 0) {
+                            $.each(data, function (index, item) {
+                                var html = `
+                                    <div class="col-md-6 hidden-item" style="display:none;">
+                                        <div class="news-card-modern d-flex flex-column">
+                                            <div class="img-wrapper">
+                                                <span class="cat-badge">${item.kategoriAd}</span>
+                                                <a href="/Home/Detay/${item.id}">
+                                                    <img src="/img/${item.resimYolu}" alt="${item.baslik}">
+                                                </a>
+                                            </div>
+                                            <div class="p-4 d-flex flex-column flex-grow-1">
+                                                <div class="text-muted small mb-2 fw-medium">
+                                                    <i class="bi bi-calendar3 me-2 text-danger"></i>${item.tarih}
+                                                </div>
+                                                <h5 class="fw-bold mb-3 flex-grow-1 lh-base">
+                                                    <a href="/Home/Detay/${item.id}" class="text-dark text-decoration-none">${item.baslik}</a>
+                                                </h5>
+                                                <a href="/Home/Detay/${item.id}" class="btn btn-link text-danger p-0 fw-bold text-decoration-none align-self-start">
+                                                    Devamını Oku <i class="bi bi-arrow-right ms-1"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                $("#haberListesi").append(html);
+                            });
+
+                            $(".hidden-item").fadeIn(600);
+                            skipSayisi += 5;
+                            btn.text(orjText);
+                            btn.prop('disabled', false);
+                        } else {
+                            btn.hide();
+                        }
+                    },
+                    error: function () {
+                        alert("Hata oluştu.");
+                        btn.text(orjText);
+                        btn.prop('disabled', false);
+                    }
+                });
+            });
+        });
+    </script>
+}
